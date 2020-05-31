@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize"
+import { Sequelize } from "sequelize-typescript"
 import yenv from "yenv"
 
 const env = yenv()
@@ -10,28 +10,26 @@ const {
   DIALECT,
 } = env.DATABASE.POSTGRESQL
 
-const config = {
+let config = {
   host: HOST,
   dialect: DIALECT,
   define: {
     createdAt: "date_created",
     updatedAt: "date_last_updated",
   },
+  models: [__dirname + '/models'],
 }
 
-let sequelize
 if (env.NODE_ENV === "production") {
-  sequelize = new Sequelize(DATABASE_NAME, USERNAME, PASSWORD, {
+  const config_prd = {
     ...config,
     dialectOptions: {
       ssl: true,
       native: true,
     },
-    logging: true
-  })
-} else {
-  sequelize = new Sequelize(DATABASE_NAME, USERNAME, PASSWORD, config)
+    logging: true,
+  }
+  config = config_prd
 }
 
-const db = {}
-
+export const sequelize = new Sequelize(DATABASE_NAME, USERNAME, PASSWORD, config)
