@@ -7,7 +7,8 @@ const env = yenv()
 
 sequelize
   .authenticate()
-  .then(() => {
+  .then(async () => {
+    await sequelize.sync()
     console.log("database connected!")
     app.listen(env.PORT, () => console.log(`Server is running`))
   })
